@@ -75,10 +75,10 @@ class UsersController < ApplicationController
     unless is_api_request?
       @users_services = @user.services.paginate(:page => @page,
                                                 :order => "created_at DESC")
-                                                
-      @users_paged_annotated_services_ids = @user.annotated_service_ids.paginate(:page => @page, :per_page => @per_page)
-      @users_paged_annotated_services = BioCatalogue::Mapper.item_ids_to_model_objects(@users_paged_annotated_services_ids, "Service")
-      
+
+      @users_paged_annotated_services  = Service.where(:id => @users_paged_annotated_services).paginate(:page => @page, :per_page => @per_page)
+      @users_paged_annotated_services_ids = @users_paged_annotated_services.map {|x| x.id}
+
       @users_services_responsible_for = @user.other_services_responsible(@page, @per_page)
       
       @service_responsibles = @user.service_responsibles.paginate(:page => @page, 
@@ -97,7 +97,7 @@ class UsersController < ApplicationController
   # GET /users/new.xml
   def new
     if logged_in? && !is_api_request?
-      flash[:error] = "You cannot sign up for a new account because you are already logged in"
+      flash[:error] = "You cannot sign up for a new account because you are already logged in."
       redirect_to home_url
     else
       @user = User.new
@@ -120,9 +120,9 @@ class UsersController < ApplicationController
 
     respond_to do |format|
       if @user.save
-        UserMailer.deliver_registration_notification(@user, base_host)
+        UserMailer.registration_notification(@user, base_host).deliver
         #flash[:notice] = "Your account was successfully created.<p><b>Your account now needs to be activated.</b></p><p>You'll receive an email shortly to confirm the creation of your account and activate it.</p>"
-        flash[:notice] = "<div class=\"flash_header\">An <b>email</b> has been sent to your address in order to complete your registration.</div><div class=\"flash_body\">If you don't receive this email in the next few minutes, please contact <a href=\"/contact\">#{SITE_NAME} Support</a>.</div>"
+        flash[:notice] = "<div class=\"flash_header\">An <b>email</b> has been sent to your address in order to complete your registration.</div><div class=\"flash_body\">If you do not receive this email in the next few minutes, please contact <a href=\"/contact\">#{SITE_NAME} Support</a>.</div>".html_safe
         format.html { redirect_to home_url }
         #format.xml  { render :xml => @user, :status => :created, :location => @user }
         format.xml { disable_action }
@@ -139,7 +139,7 @@ class UsersController < ApplicationController
   def update
     respond_to do |format|
       if @user.update_attributes(params[:user])
-        flash.now[:notice] = 'Successfully updated'
+        flash.now[:notice] = 'Successfully updated.'
         format.html { render :action => "edit" }
         format.xml  { head :ok }
       else
@@ -156,13 +156,13 @@ class UsersController < ApplicationController
       if user
         if user.activate!
           session[:previous_url] = "/users/#{user.id}"
-          flash[:notice] = "<div class=\"flash_header\">Account activated</div><div class=\"flash_body\">You can log into your account now.</div>"
+          flash[:notice] = "<div class=\"flash_header\">Account activated</div><div class=\"flash_body\">You can log into your account now.</div>".html_safe
           ActivityLog.create(@log_event_core_data.merge(:action => "activate", :activity_loggable => user)) if USE_EVENT_LOG
           return
         end
       end
     end
-    flash[:error] = "<div class=\"flash_header\">Wrong activation code</div><div class=\"flash_body\">Please check the activation link or contact <a href=\"/contact\">#{SITE_NAME} Support</a>.</div>"
+    flash[:error] = "<div class=\"flash_header\">Wrong activation code</div><div class=\"flash_body\">Please check the activation link or contact <a href=\"/contact\">#{SITE_NAME} Support</a>.</div>".html_safe
   end
 
   def forgot_password
@@ -173,10 +173,10 @@ class UsersController < ApplicationController
     respond_to do |format|
       if @user = User.find_by_email(params[:user][:email], :conditions => "activated_at IS NOT NULL")
         @user.generate_security_token!
-        UserMailer.deliver_reset_password(@user, base_host)
+        UserMailer.reset_password(@user, base_host).deliver
         format.html # request_reset_password.html.erb
       else
-        flash[:error] = "No matching email address has been found or the account corresponding is not activated.<br />Please check the email address you entered or contact <a href=\"/contact\">#{SITE_NAME} Support</a>"
+        flash[:error] = "No matching email address has been found or the account corresponding is not activated.<br />Please check the email address you entered or contact <a href=\"/contact\">#{SITE_NAME} Support</a>.".html_safe
         format.html { redirect_to forgot_password_url }
       end
     end
@@ -186,7 +186,7 @@ class UsersController < ApplicationController
     if params[:security_token] != nil && @user = User.find_by_security_token(params[:security_token], :conditions => "activated_at IS NOT NULL")
       if request.post?
         if @user.reset_password!(params[:user][:password], params[:user][:password_confirmation])
-          flash[:notice] = "<div class=\"flash_header\">New password accepted.</div><div class=\"flash_body\">Please log in with your new password.</div>"
+          flash[:notice] = "<div class=\"flash_header\">New password accepted.</div><div class=\"flash_body\">Please log in with your new password.</div>".html_safe
           session[:previous_url] = "/users/#{@user.id}"
           flash[:error] = nil
           ActivityLog.create(@log_event_core_data.merge(:action => "reset_password", :activity_loggable => @user)) if USE_EVENT_LOG
@@ -195,7 +195,7 @@ class UsersController < ApplicationController
         end
       end
     else
-      flash[:error] = "No matching reset code has been found or the account corresponding is not activated.<br />Please check the reset link or contact <a href=\"/contact\">#{SITE_NAME} Support</a>"
+      flash[:error] = "No matching reset code has been found or the account corresponding is not activated.<br />Please check the reset link or contact <a href=\"/contact\">#{SITE_NAME} Support</a>.".html_safe
       flash[:notice] = nil
     end
   end
@@ -203,7 +203,7 @@ class UsersController < ApplicationController
   def change_password
     if request.post?
       if @user.reset_password!(params[:user][:password], params[:user][:password_confirmation])
-        flash[:notice] = "<div class=\"flash_header\">New password accepted.</div>"
+        flash[:notice] = "New password accepted."
         session[:previous_url] = "/users/#{@user.id}"
         flash[:error] = nil
         ActivityLog.create(@log_event_core_data.merge(:action => "change_password", :activity_loggable => @user)) if USE_EVENT_LOG
@@ -216,7 +216,7 @@ class UsersController < ApplicationController
   def rpx_merge_setup
     if ENABLE_RPX
       if params[:token].blank? || (data = RPXNow.user_data(params[:token])).blank? || (rpx_user = User.find_by_identifier(data[:identifier])).nil?
-        error("Unable to complete the merging of accounts", :status => 500)
+        error("Unable to complete the merging of accounts.", :status => 500)
         return
       else
         # This action is used for 2 different parts of the workflow:
@@ -224,7 +224,7 @@ class UsersController < ApplicationController
         # 2) final stage, filling in any required fields/options and submitting the merge.
         
         if rpx_user.id == current_user.id
-          flash[:notice] = "<b>Please sign in to the existing member account that you want to merge your new account into</b>"
+          flash[:notice] = "Please sign in to the existing member account that you want to merge your new account into."
           @rpx_login_required = true
         else
           @rpx_login_required = false
@@ -244,7 +244,7 @@ class UsersController < ApplicationController
   def rpx_merge
     if ENABLE_RPX
       if params[:token].blank? || (data = RPXNow.user_data(params[:token])).blank? || (rpx_user = User.find_by_identifier(data[:identifier])).nil? || !rpx_user.allow_merge?
-        error("Unable to complete the merging of accounts", :status => 500)
+        error("Unable to complete the merging of accounts.", :status => 500)
         return
       else
         begin
@@ -254,7 +254,7 @@ class UsersController < ApplicationController
           
           ActivityLog.create(@log_event_core_data.merge(:action => "rpx_merge", :activity_loggable => current_user, :data => { :deleted_account_id => rpx_user.id }))
           
-          flash[:notice] = "Accounts successfully merged!"
+          flash[:notice] = "Accounts successfully merged."
           redirect_to(current_user)
         rescue Exception => ex
           logger.error "Failed to merge new RPX based account with an existing #{SITE_NAME} account. Exception: #{ex.class.name} - #{ex.message}"
@@ -279,7 +279,7 @@ class UsersController < ApplicationController
             else
               @user.identifier = data[:identifier]
               if @user.save
-                flash[:notice] = 'You have successfully updated your external account and can now log in with it'
+                flash[:notice] = 'You have successfully updated your external account and can now log in with it.'
                 format.html { redirect_to edit_user_url(@user) }
               else
                 flash.now[:error] = 'Could not update your external account identifier. Please see errors below...'
@@ -368,10 +368,10 @@ class UsersController < ApplicationController
       if @user
         if @user.make_curator!
           ActivityLog.create(@log_event_core_data.merge(:action => "make_curator", :culprit => current_user, :activity_loggable => @user)) if USE_EVENT_LOG
-          flash[:notice] = "<div class=\"flash_header\">#{@user.display_name} is now a curator</div>"
+          flash[:notice] = "#{@user.display_name} is now a curator."
           format.html{ redirect_to(user_url(@user)) }
         else
-          flash[:error] = "<div class=\"flash_header\">Could not make user a curator</div>"
+          flash[:error] = "Could not make user a curator."
           format.html{ redirect_to(user_url(@user)) }
         end
       end
@@ -383,10 +383,10 @@ class UsersController < ApplicationController
       if @user
         if @user.remove_curator!
           ActivityLog.create(@log_event_core_data.merge(:action => "remove_curator", :culprit => current_user, :activity_loggable => @user)) if USE_EVENT_LOG
-          flash[:notice] = "<div class=\"flash_header\">#{@user.display_name} is no longer a curator</div>"
+          flash[:notice] = "#{@user.display_name} is no longer a curator."
           format.html{ redirect_to(user_url(@user)) }
         else
-          flash[:error] = "<div class=\"flash_header\">Could not remove curator rights on user</div>"
+          flash[:error] = "Could not remove curator rights on user."
           format.html{ redirect_to(user_url(@user)) }
         end
       end
@@ -398,9 +398,9 @@ class UsersController < ApplicationController
       if @user
         if @user.activate!
           ActivityLog.create(@log_event_core_data.merge(:action => "activate", :culprit => current_user, :activity_loggable => @user)) if USE_EVENT_LOG
-          flash[:notice] = "<div class=\"flash_header\">#{@user.display_name} has been activated</div>"
+          flash[:notice] = "#{@user.display_name} has been activated."
         else
-          flash[:error] = "<div class=\"flash_header\">Could not activate the user. Please contact a system admin.</div>"
+          flash[:error] = "Could not activate the user. Please contact a system admin."
         end
         format.html{ redirect_to :back }
       end
@@ -412,10 +412,10 @@ class UsersController < ApplicationController
       if @user
         if @user.deactivate!
           ActivityLog.create(@log_event_core_data.merge(:action => "deactivate", :culprit => current_user, :activity_loggable => @user)) if USE_EVENT_LOG
-          flash[:notice] = "<div class=\"flash_header\">#{@user.display_name} has been deactivated</div>"
+          flash[:notice] = "#{@user.display_name} has been deactivated."
           format.html{ redirect_to(root_url) }
         else
-          flash[:error] = "<div class=\"flash_header\">Could not deactivate the user. Please contact a system admin.</div>"
+          flash[:error] = "Could not deactivate the user. Please contact a system admin."
           format.html{ redirect_to(user_url(@user)) }
         end
       end
@@ -425,6 +425,9 @@ class UsersController < ApplicationController
 protected
 
   def include_deactivated?
+    #if user is not logged in or is not a curator then do not let them
+    # see deactivated users whatever is in the query parameters
+    return false if !logged_in? || !current_user.is_curator?
     unless defined?(@include_deactivated)
       session_key = "#{self.controller_name.downcase}_#{self.action_name.downcase}_include_deactivated"
       if !params[:include_deactivated].blank?
@@ -484,15 +487,17 @@ private
     unless order_field.blank? or order_direction.nil?
       order = "users.#{order_field} #{order_direction}"
     end
-    
-    conditions, joins = BioCatalogue::Filtering::Users.generate_conditions_and_joins_from_filters(@current_filters, params[:q])
-    conditions = User.merge_conditions(conditions, "activated_at IS NOT NULL") unless include_deactivated?
 
+     conditions, joins = BioCatalogue::Filtering::Users.generate_conditions_and_joins_from_filters(@current_filters, params[:q])
+    #TODO merge conditions using 'where' rather than deprecated 'merge_conditions' method
+    #conditions = User.merge_conditions(conditions, "activated_at IS NOT NULL") unless include_deactivated?
+    conditions_string = User.send(:sanitize_sql, conditions)  # naughty was of doing things but things only works if we pass the conditions as a string
+    conditions_string = "#{conditions_string} #{conditions_string.blank? ? '' : 'AND'} activated_at IS NOT NULL" unless include_deactivated?
     if self.request.format == :bljson
       finder_options = {
         :select => "users.id, users.display_name",
         :order => order,
-        :conditions => conditions,
+        :conditions => conditions_string,
         :joins => joins
       }
       
@@ -501,14 +506,16 @@ private
       @users = User.paginate(:page => @page,
                              :per_page => @per_page,
                              :order => order,
-                             :conditions => conditions,
+                             :conditions => conditions_string,
                              :joins => joins)
-  
+
     end
   end
   
   def find_user
-    @user = User.find(params[:id], :conditions => "activated_at IS NOT NULL")
+    # Old Rails 2 style
+    #@user = User.find(params[:id], :conditions => "activated_at IS NOT NULL")
+    @user = User.where("activated_at IS NOT NULL").find(params[:id])
   end
 
   def find_user_inclusive
@@ -519,7 +526,7 @@ private
     find_user if !defined?(@user) or @user.nil?
     unless mine?(@user)     
       respond_to do |format|
-        flash[:error] = "You don't have the rights to perform this action."
+        flash[:error] = "You do not have the rights to perform this action."
         format.html { redirect_to :users }
         format.xml  { redirect_to :users => @user.errors, :status => :unprocessable_entity }
         format.json  { error_to_back_or_home("You are not allowed to perform this action") }

@@ -14,8 +14,8 @@
   <div class="resource_title">
     <%= generic_icon_for(:service, 'margin-right: 0.3em;', "Web Service") -%>
     <span style="vertical-align: middle;"><%= display_name(@service) -%></span>
-    <%= service_type_badges(@service.service_types) -%>
-    <%= service_location_flags(@service) -%>
+    <%= service_type_badges(@service.service_types).html_safe -%>
+    <%= service_location_flags(@service).html_safe -%>
   </div>
   <div class="header_right_bar" style="margin-top: -50px;">
 		<span style="vertical-align: middle; margin-right: 0.5em">
@@ -27,13 +27,13 @@
 <% if logged_in? %>
     <div class="header_left_bar" style="float: none; position: static;" id="center" >
        <span class="actions_button_row" >
-          <%= if (fav = favourite_action(@service, current_user )) then '<span class="actions_button"> ' + fav + '</span>' end%>
-          <%= if (resp = take_responsibility_action(@service, current_user)) then '<span class="actions_button">' + resp + '</span>' end %>
+          <%= if (fav = favourite_action(@service, current_user )) then ('<span class="actions_button"> ' + fav + '</span>').html_safe end%>
+          <%= if (resp = take_responsibility_action(@service, current_user)) then ('<span class="actions_button">' + resp + '</span>').html_safe end %>
           <%  if BioCatalogue::Auth.allow_user_to_curate_thing?(current_user, @service) then %>
-              <%= if (pend = pending_responsibility_action(@pending_responsibility_requests)) then '<span class="actions_button">' +  pend +'</span>' end %>
-              <%= if (update = check_updates_action(@service)) then '<span class="actions_button">' + update + '</span>' end %>
-              <%= if (archive = archive_action(@service) )then '<span class="actions_button">' + archive+'</span>' end %>
-              <%= if (remove = remove_action(@service)) then '<span class="actions_button">' + remove +'</span>' end %>
+              <%= if (pend = pending_responsibility_action(@pending_responsibility_requests)) then ('<span class="actions_button">' +  pend + '</span>').html_safe end %>
+              <%= if (update = check_updates_action(@service)) then ('<span class="actions_button">' + update + '</span>').html_safe end %>
+              <%= if (archive = archive_action(@service) )then ('<span class="actions_button">' + archive+'</span>').html_safe end %>
+              <%= if (remove = remove_action(@service)) then ('<span class="actions_button">' + remove +'</span>').html_safe end %>
            <% end %>
        </span>
     </div>
@@ -113,7 +113,7 @@
 			<% if !@soaplab_service.nil? or is_soaplab_service?(@service) %>
 				<div class="box_info_standout" style="text-align:center;">
 					This looks like a <b>Soaplab</b> service.
-					<%= link_to_function "Click here for more info and guidance on how to use this service" + expand_image, visual_effect(:toggle_blind, "about_soaplab", :duration => 0.3), :style => "text-decoration:none;" %>
+					<%= link_to_function "Click here for more info and guidance on how to use this service #{expand_image})".html_safe, visual_effect(:toggle_blind, "about_soaplab", :duration => 0.3), :style => "text-decoration:none;" %>
 					<div id="about_soaplab" style="display:none;">
 						<%= render :partial => "soaplab_servers/about_soaplab" -%>
 					</div>
@@ -125,7 +125,7 @@
 					This looks like a <b>BioMoby</b> service. We are working on providing better support and documentation for BioMoby services.
 					<br/>
 					<b>
-						<%= link_to_function "Click here for more info and guidance on how to use this service" + expand_image, visual_effect(:toggle_blind, "about_biomoby", :duration => 0.3), :style => "text-decoration:none;" %>
+						<%= link_to_function "Click here for more info and guidance on how to use this service #{expand_image}".html_safe, visual_effect(:toggle_blind, "about_biomoby", :duration => 0.3), :style => "text-decoration:none;" %>
 					</b>
 					<div id="about_biomoby" style="display:none;">
 						<%= render :partial => "services/about_biomoby" -%>
@@ -158,9 +158,9 @@
 			</p>
 			
 			<p>
-				<b>Submitter / Source:</b>
+				<b>Submitter/Source:</b>
 				<br/>
-				<%= submitter_link(@service.submitter, "margin-right: 0.5em; vertical-align: middle;") %>
+				<%= submitter_link(@service.submitter, "margin-right: 0.5em; vertical-align: middle;").html_safe %>
 				<span class="ago" style="vertical-align: baseline;">
 					(<%= distance_of_time_in_words_to_now(@service.created_at) -%> ago)
 				</span>

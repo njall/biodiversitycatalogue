@@ -7,7 +7,7 @@
 class ServicesController < ApplicationController
 
   before_filter :disable_action, :only => [ :edit, :update ]
-  before_filter :disable_action_for_api, :except => [ :index, :show, :filters, :summary, :annotations, :deployments, :variants, :monitoring, :activity, :filtered_index, :favourite, :unfavourite ]
+  before_filter :disable_action_for_api, :except => [ :index, :show, :filters, :summary, :annotations, :deployments, :variants, :monitoring, :activity, :filtered_index, :favourite, :unfavourite, :bmb ]
 
   before_filter :login_or_oauth_required, :only => [ :destroy, :check_updates, :archive, :unarchive, :favourite, :unfavourite ]
 
@@ -39,6 +39,7 @@ class ServicesController < ApplicationController
   # GET /services
   # GET /services.xml
   def index
+    @per_page_options = %w{ 20 50 100 }
     respond_to do |format|
       format.html # index.html.erb
       format.xml  # index.xml.builder
@@ -336,6 +337,15 @@ class ServicesController < ApplicationController
     end
   end
 
+  def bmb
+    # Get all SOAP and REST services that have not been archived
+    @services = (RestService.includes(:service).where("services.archived_at is NULL") + SoapService.includes(:service).where("services.archived_at is NULL")).sort_by { |s| s.created_at }
+
+    respond_to do |format|
+      format.xml
+    end
+  end
+
   protected
 
   def parse_sort_params
@@ -435,7 +445,7 @@ class ServicesController < ApplicationController
   end
 
   def find_favourite
-    @favourite = Favourite.find(:first, :conditions => { :favouritable_type => "Service", :favouritable_id => params[:id], :user_id => current_user.id })
+    @favourite = Favourite.first(:conditions => { :favouritable_type => "Service", :favouritable_id => params[:id], :user_id => current_user.id })
   end
 
   def check_if_user_wants_to_categorise
