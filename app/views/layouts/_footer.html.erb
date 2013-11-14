@@ -9,68 +9,70 @@
 %>
 
 <div id="footer">
-	<div id="footer_links">
-		<ul>
-			<li><a href="/termsofuse">Terms of Use</a></li>
-			<li class="separator"><a href="http://www.biovel.eu">About BioVeL</a></li>
-			<li class="separator"><a href="/contact">Contact Us</a></li>
-			<% if false %>
-			<li class="separator"><a href="http://www.biocatalogue.org/wiki/doku.php?id=public:help:getting_started" target="_blank">Getting Started</a></li>
-			<li class="separator"><a href="http://www.biocatalogue.org/wiki/doku.php?id=public:help" target="_blank">Further Help</a></li>
+  <div id="footer_links">
+    <ul>
+      <li><a href="/termsofuse">Terms of Use</a></li>
+      <li class="separator"><a href="http://www.biovel.eu">About BioVeL</a></li>
+      <li class="separator"><a href="/contact">Contact Us</a></li>
+      <% if false %>
+          <li class="separator"><a href="http://www.biocatalogue.org/wiki/doku.php?id=public:help:getting_started" target="_blank">Getting Started</a></li>
+          <li class="separator"><a href="http://www.biocatalogue.org/wiki/doku.php?id=public:help" target="_blank">Further Help</a></li>
       <% end %>
-			<li class="separator"><a href="/stats" target="_blank">Registry Stats</a></li>
-			<li class="separator"><a href="http://apidocs.biocatalogue.org" target="_blank">API Documentation</a></li>
-			<li class="separator"><a href="http://www.biocatalogue.org/wiki/doku.php?id=public:for_developers" target="_blank">For Developers</a></li>
-		</ul>
-	</div>
-	<span class="clear">&nbsp;</span>
-	
-	<center>
-		<div class="logos">
+      <li class="separator"><a href="/stats" target="_blank">Registry Stats</a></li>
+      <li class="separator"><a href="http://apidocs.biocatalogue.org" target="_blank">API Documentation</a></li>
+      <li class="separator"><a href="http://www.biocatalogue.org/wiki/doku.php?id=public:for_developers" target="_blank">For Developers</a></li>
+    </ul>
+  </div>
+  <span class="clear">&nbsp;</span>
+
+  <center>
+    <div class="logos">
       <p>
-		  The <a target="_blank" href="https://github.com/myGrid/biocatalogue">BioCatalogue software</a>
-		  is a joint development by
-		  <a target="_blank" href="http://www.manchester.ac.uk/">The University of Manchester</a>
-		  and <a target="_blank" href="http://www.ebi.ac.uk/">The European Bioinformatics Institute</a>.
-		  <br />It was initially funded by the
-		  <a target="_blank" href="http://www.bbsrc.ac.uk/">BBSRC</a>.
-      Further enhancements are currently being developed by the
-      <a target="_blank" href="http://www.biovel.eu">BioVeL Project</a>
-      <br />which is funded by the
-		  <a target="_blank" href="http://ec.europa.eu/research/fp7/index_en.cfm">
-		  European Commission 7th Framework Programme (FP7)</a>.
+        The <a target="_blank" href="https://github.com/myGrid/biocatalogue">BioCatalogue software</a>
+        is a joint development by
+        <a target="_blank" href="http://www.manchester.ac.uk/">The University of Manchester</a>
+        and <a target="_blank" href="http://www.ebi.ac.uk/">The European Bioinformatics Institute</a>.
+        <br />It was initially funded by the
+        <a target="_blank" href="http://www.bbsrc.ac.uk/">BBSRC</a>.
+        Further enhancements are currently being developed by the
+        <a target="_blank" href="http://www.biovel.eu">BioVeL Project</a>
+        <br />which is funded by the
+        <a target="_blank" href="http://ec.europa.eu/research/fp7/index_en.cfm">
+          European Commission 7th Framework Programme (FP7)</a>.
       </p>
       <p style="margin-top: 1em;">
         <%= link_to(image_tag('manchester_logo.png', :alt => "University of Manchester"), "http://www.manchester.ac.uk/", :target => "_blank") -%>
         <%= link_to(image_tag('biovel_logo_sm.png', :alt => "BioVeL"), "http://www.biovel.eu/", :target => "_blank") -%>
         <%= link_to(image_tag('fp7_cap_logo.png', :alt => "FP7 Capabilities"), "http://ec.europa.eu/research/fp7/index_en.cfm", :target => "_blank") -%>
         <%= link_to(image_tag('e_infrastructure_logo.png', :alt => "FP7 e-infrastructure"), "http://cordis.europa.eu/fp7/ict/e-infrastructure/", :target => "_blank") -%>
-		    <%= link_to(image_tag('bbsrc_logo.png', :alt => "BBSRC"), "http://www.bbsrc.ac.uk/", :target => "_blank") -%>
-		    <%= link_to(image_tag('ebi_logo.png', :alt => "EMBL-EBI"), "http://www.ebi.ac.uk/", :target => "_blank") -%>
+        <%= link_to(image_tag('bbsrc_logo.png', :alt => "BBSRC"), "http://www.bbsrc.ac.uk/", :target => "_blank") -%>
+        <%= link_to(image_tag('ebi_logo.png', :alt => "EMBL-EBI"), "http://www.ebi.ac.uk/", :target => "_blank") -%>
       </p>
     </div>
   </center>
 
-	<p style="margin-top: 2em;">
-		<%= render :partial => "widgets/twitter", :locals => { :link_type => :big } -%>
-	</p>
-	
-	<p class="copyright">
-		Copyright (c) 2008 -
-		<%= Time.now.year -%>
-		<%= link_to "The University of Manchester", "http://www.manchester.ac.uk/", :target => '_blank' %> and the
-		<%= link_to("European Bioinformatics Institute (EMBL-EBI)", "http://www.ebi.ac.uk/", :target => "_blank") -%>
-	</p>
+  <p style="margin-top: 2em;">
+    <%= render :partial => "widgets/twitter", :locals => { :link_type => :big } -%>
+  </p>
+
+  <p class="copyright">
+    Copyright (c) 2008 -
+    <%= Time.now.year -%>
+    <%= link_to "The University of Manchester", "http://www.manchester.ac.uk/", :target => '_blank' %> and the
+    <%= link_to("European Bioinformatics Institute (EMBL-EBI)", "http://www.ebi.ac.uk/", :target => "_blank") -%>
+  </p>
 
   <div id="licensing_info">
-		<ul>
+    <ul>
       <li><span class="grayed_text">Codebase license:</span> <a href="https://github.com/myGrid/biocatalogue/blob/master/license.txt">BSD License</a></li>
-			<li class="separator"/>
+      <li class="separator"/>
       <li><span class="grayed_text">Content license:</span> <a href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution ShareAlike</a></li>
-			<li class="separator"/>
+      <li class="separator"/>
       <li><span class="grayed_text">System version:</span> <%=h BioCatalogue::VERSION -%></li>
-			<li class="separator"/>
+      <li class="separator"/>
       <li><span class="grayed_text">API version:</span> <%=h BioCatalogue::API_VERSION -%></li>
+      <li class="separator"/>
+      <li><span class="grayed_text">Runs on: </span> Ruby <%= RUBY_VERSION %> and Rails <%= h Rails.version -%></li>
     </ul>
   </div>
   <span class="clear">&nbsp;</span>
