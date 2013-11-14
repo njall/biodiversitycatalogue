@@ -33,3 +33,5 @@ solr/default
 *.rails2
 .gitkeep
 config/initializers/secret_token.rb
+
+public/favicon.ico
