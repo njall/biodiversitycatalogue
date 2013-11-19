@@ -2,14 +2,6 @@ require File.expand_path('../boot', __FILE__)
 
 #Configurations needed before the app init
 
-# Logs rotation
-# Set this to true to rotate the logs
-ROTATE_LOGS = false
-
-# Set the rotation parameters
-# Example CRONOLOG_PARAMS = "/my/server/cronolog /my/application/file/log/production.log.%Y%m%d"
-CRONOLOG_PARAMS = nil
-
 require 'rails/all'
 
 if defined?(Bundler)
@@ -62,18 +54,6 @@ module BioCatalogue
     # config.load_paths += %W( #{RAILS_ROOT}/extras )
     %w( mailers observers sweepers ).each do |s|
       config.autoload_paths += [File.join(Rails.root, 'app', s)]
-    end
-
-    # Rotate logs when they reach a size of 10M and keep no more than 10 of these
-    #config.logger = Logger.new(config.log_path, 10, (1024**2)*10)
-
-    # Use cronolog for log rotation in production
-    # ROTATE_LOGS & CRONOLOG_PARAMS constants
-    # are set in config/preinitializer.rb
-    # By default log rotation is switched off
-    if ROTATE_LOGS && CRONOLOG_PARAMS
-      config.logger = Logger.new(IO.popen(CRONOLOG_PARAMS, "w"))
-      config.logger.level = Logger::DEBUG
     end
 
     # Force all environments to use the same logger level
