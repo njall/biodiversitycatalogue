@@ -1,3 +1,4 @@
+# encoding: UTF-8
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -174,8 +175,8 @@ ActiveRecord::Schema.define(:version => 20130619112049) do
     t.datetime "locked_at"
     t.datetime "failed_at"
     t.string   "locked_by"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",                :null => false
+    t.datetime "updated_at",                :null => false
     t.string   "queue"
   end
 
@@ -630,10 +631,10 @@ ActiveRecord::Schema.define(:version => 20130619112049) do
   add_index "test_scripts", ["submitter_id"], :name => "t_scripts_user_id_index"
 
   create_table "text_value_versions", :force => true do |t|
-    t.integer  "text_value_id",                          :null => false
-    t.integer  "version",                                :null => false
+    t.integer  "text_value_id",                            :null => false
+    t.integer  "version",                                  :null => false
     t.integer  "version_creator_id"
-    t.text     "text",               :limit => 16777215, :null => false
+    t.text     "text",               :limit => 2147483647, :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -641,9 +642,9 @@ ActiveRecord::Schema.define(:version => 20130619112049) do
   add_index "text_value_versions", ["text_value_id"], :name => "index_text_value_versions_on_text_value_id"
 
   create_table "text_values", :force => true do |t|
-    t.integer  "version",                                :null => false
+    t.integer  "version",                                  :null => false
     t.integer  "version_creator_id"
-    t.text     "text",               :limit => 16777215, :null => false
+    t.text     "text",               :limit => 2147483647, :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
