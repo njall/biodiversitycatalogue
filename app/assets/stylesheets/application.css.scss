@@ -1755,7 +1755,7 @@ table.latest_contributors td.count {
 }
 
 .tabberlive {
-    margin-top: 1em;
+    margin-top: 0em;
 }
 
 /*--------------------------------------------------
@@ -1769,6 +1769,9 @@ ul.tabbernav {
     font-size: 116%;
     line-height: 24px;
     padding-bottom: 1px;
+}
+ul.tor {
+  padding-bottom: 0px;
 }
 
 ul.tabbernav li {
@@ -3185,6 +3188,7 @@ img.account_provider_logo {
 .toolbar {
     float: right;
 }
+
 
 .computational_type_details {
     font-size: 93%;
