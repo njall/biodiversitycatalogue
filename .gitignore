@@ -4,6 +4,7 @@ log/
 tmp/
 var/
 
+config/environments/production.rb
 config/database.yml
 config/initializers/biocat_local.rb
 config/initializers/geokit_local.rb
@@ -21,7 +22,7 @@ public/javascripts/base_packaged.js
 public/stylesheets/base_packaged.css
 data/search_query_suggestions.txt
 data/eb-eye/eb-eye_dump_*
-data/csv-exports/*
+data/*-csv-exports
 app/assets/stylesheets/colours/override.css.scss
 public/assets
 
