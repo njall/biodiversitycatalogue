@@ -1,22 +1,43 @@
 # BioCatalogue: app/controllers/stats_controller.rb
 #
-# Copyright (c) 2009, University of Manchester, The European Bioinformatics 
+# Copyright (c) 2009, University of Manchester, The European Bioinformatics
 # Institute (EMBL-EBI) and the University of Southampton.
 # See license.txt for details.
 
 class StatsController < ApplicationController
-  
+
   before_filter :disable_action_for_api
-  
+
+  set_tab :general, :stats, :only => %w(general index)
+  set_tab :metadata, :stats, :only => %w(metadata)
+  set_tab :tags, :stats, :only => %w(tags)
+  set_tab :search, :stats, :only => %w(search)
+
+  before_filter :index, :only => [:general, :metadata, :tags, :search]
+
+  def general ;  end
+  def metadata ; end
+  def tags ;     end
+  def search ;   end
+
+  include BioCatalogue::Stats
+
   def index
-
-    # Do not attempt to generate stats if there are no services in the Catalogue
     @service_count = Service.count
+    @stats = Rails.cache.read('registry_stats')
+    if @stats.nil?
+      #read stats from yaml file and write to cache
+      file = Rails.root.join('data', "#{Rails.env}_reports", 'registry_stats.yml').to_s
+      if File.exists?(file)
+        @stats = YAML.load(File.open(file))
+        Rails.cache.write('registry_stats', @stats)
+      else
+        flash[:error] = "No stats report found. Please contact #{SITE_NAME} administators for help"
+      end
+    end
 
-    @stats = BioCatalogue::Stats.get_last_stats unless @service_count == 0
-    
     respond_to do |format|
-      format.html
+      format.html {render 'stats/index'}
     end
   end
   

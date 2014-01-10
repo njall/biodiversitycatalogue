@@ -31,13 +31,21 @@ module BioCatalogue
     
     def self.generate_current_stats
       stats = StatsData.new
-        
-      # Write it to the cache...
-      Rails.cache.write(@@cache_key, stats)
-      
+      # Write it to a yaml file...
+      save_report(stats)
+
       return stats
     end
-    
+
+    def self.save_report report_values
+      reports_dir = Rails.root.join('data', "#{Rails.env}_reports")
+      unless Dir.exist?(reports_dir)
+        Dir.mkdir(reports_dir)
+      end
+      links_checker_file = reports_dir.to_s + '/registry_stats.yml'
+      File.open(links_checker_file, File::WRONLY|File::CREAT) {|file| file.write(report_values.to_yaml)}
+    end
+
     def self.submit_job_to_refresh_stats
       # Only submit a job if if necessary... 
       unless BioCatalogue::DelayedJobs.job_exists?("BioCatalogue::Jobs::UpdateStats")
