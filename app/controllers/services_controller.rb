@@ -233,6 +233,7 @@ class ServicesController < ApplicationController
 
   def monitoring
     respond_to do |format|
+      format.xml  # monitoring.xml.builder
       format.html { render 'services/show'}
     end
   end
