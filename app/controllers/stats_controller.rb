@@ -24,16 +24,24 @@ class StatsController < ApplicationController
 
   def index
     @service_count = Service.count
-    @stats = Rails.cache.read('registry_stats')
-    if @stats.nil?
-      #read stats from yaml file and write to cache
-      file = Rails.root.join('data', "#{Rails.env}_reports", 'registry_stats.yml').to_s
-      if File.exists?(file)
+    file = Rails.root.join('data', "#{Rails.env}_reports", 'registry_stats.yml').to_s
+    if File.exists?(file)
+      modified_time = File.mtime(file)
+      @stats = Rails.cache.read('registry_stats')
+      # Load stats from file if there's no cached copy OR
+      # the stats file is newer than the stats (careful when comparing as there is
+      # some time lag between generating the new stats object (which has created_at field)
+      # and serialising it to the file so the 'last modified time' of the file is always a
+      # couple of seconds younger than the stats object it contains so technically the file is
+      # always younger than the @stats object it contains but we only want to load the file the
+      # next time it is generated from a background job and not every time so we are giving it + 1 minute
+      # when checking).
+      if @stats.nil? || (@stats.created_at + 1.minutes) < modified_time
         @stats = YAML.load(File.open(file))
         Rails.cache.write('registry_stats', @stats)
-      else
-        flash[:error] = "No stats report found. Please contact #{SITE_NAME} administators for help"
       end
+    else
+      flash[:error] = "No stats report found. Please contact #{SITE_NAME} administators for help"
     end
 
     respond_to do |format|
