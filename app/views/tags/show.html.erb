@@ -28,13 +28,33 @@
 	returned <%= pluralize(count, "services") -%>
 </p>
 
+<div class="search_options">
+  <div class="search_option">
+            <span style="vertical-align: middle; font-weight: bold;">
+            Include archived?
+            </span>
+            <span style="vertical-align: middle; padding: 0; margin-left: 0.1em; width: 100%;">
+                <input type="checkbox"
+                       name="include_archived"
+                       id="include_archived"
+                       data-onchange-url="<%= generate_include_archived_url('tag', !include_archived?) %>"
+                       onchange="loadUrlFromCheckboxInputTag(this); return false;"
+                       <%= "checked='yes'" if include_archived? %> />
+            </span>
+  </div>
+  <% params_dup = BioCatalogue::Util.duplicate_params(params) %>
+  <% params_dup = BioCatalogue::Util.remove_rails_special_params_from(params_dup) %>
+  <div class="search_option">
+    <%= link_to("Filter services", services_path(params_dup.merge(:tag => "[#{@tag.label}]")), :class => "button_slim") %>
+  </div>
+</div>
+
 <% if @service_ids.empty? %>
 
   <p class="none_text">No services.</p>
-  
-<% else %>
 
-    <%
+<% else %>
+        <%
          services = Service.where(:id => @service_ids).paginate(:page => params[:page], :per_page => @per_page)
          #TODO figure out why current_page_ids only works as an array of Services rather than an array of ids
          current_page_ids = services

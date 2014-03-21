@@ -110,13 +110,13 @@ if ENABLE_RPX
 end
 
 # Set global pagination per_page parameter in all models.
-PAGE_ITEMS_SIZE = 20
+PAGE_ITEMS_SIZE = 21
 class ActiveRecord::Base
   cattr_reader :per_page
   @@per_page = PAGE_ITEMS_SIZE
 end
 
-MAX_PAGE_SIZE = 100
+MAX_PAGE_SIZE = 99
 
 
 #  MAX_RESULTS is the total number of results to return.
@@ -257,6 +257,10 @@ BioCatalogue::Application.config.middleware.use ExceptionNotifier,
                                                     :send_email_error_codes => %W( 400 405 500 501 503 ),
                                                     :view_path => 'app/views/error'
                                                 }
+
+Paperclip::Attachment.default_options[:path] = ':rails_root/app/assets/images/:url'
+Paperclip::Attachment.default_options[:url] = ":class/#{Rails.env}/:id/:filename/:style.:extension"
+
 
 # ===============================================================
 

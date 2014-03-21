@@ -227,7 +227,7 @@ protected
 
   def set_per_page
     if self.request.format == :atom
-      @per_page = 20
+      @per_page = 21
     else
       per_page = (params[:per_page] || PAGE_ITEMS_SIZE).try(:to_i)
       if per_page < 1
@@ -498,7 +498,7 @@ protected
       elsif !session[session_key].blank?
         @include_archived = (session[session_key] == "true")
       else
-        @include_archived = true
+        @include_archived = false
         session[session_key] = @include_archived.to_s
       end
     end
@@ -506,15 +506,21 @@ protected
   end
   helper_method :include_archived?
 
-  def generate_include_archived_url(resource, should_include_archived)
+  def generate_include_archived_url(resource, should_include_archived, current_tab=nil)
     params_dup = BioCatalogue::Util.duplicate_params(params)
     params_dup[:include_archived] = should_include_archived.to_s
+    params_dup.merge(:tab => current_tab) unless current_tab.blank?
 
     # Reset page param
     params_dup.delete(:page)
 
-    return eval("#{resource}_url(params_dup)")
+    if current_tab.blank?
+      return eval("#{resource}_url(params_dup) ")
+    else
+      return eval("#{resource}_url(params_dup) ") + "##{current_tab}"
+    end
   end
+
   helper_method :generate_include_archived_url
 
   # ===============================

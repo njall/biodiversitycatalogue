@@ -83,7 +83,7 @@ body {
     background-color: $primary_colour;
     font-family: arial;
     color: #333333;
-    min-width: 950px;
+    min-width: 1168px;
 }
 
 p {
@@ -3498,7 +3498,7 @@ a.globalise_param_link {
 
 .archived {
     background-image: none !important;
-    background-color: #EEEEEE !important;
+    background-color: #F5F5F5;
     color: #999999 !important;
 }
 
@@ -3644,4 +3644,19 @@ table.listings_table {
 
 #error_flash .rcontain, #error_flash .rtop div, #error_flash .rbottom div {
   background-color: $notice_flash;
+}
+
+.search_options {
+  float: right;
+  width: 25%;
+  padding-left: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  background-color: #EAEEFB;
+  inline: block;
+  font-size:90%;
+}
+
+.search_option {
+  padding: 2px;
 }

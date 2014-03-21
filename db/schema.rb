@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130619112049) do
+ActiveRecord::Schema.define(:version => 20140228121452) do
 
   create_table "activity_logs", :force => true do |t|
     t.string   "action",                 :limit => 60
@@ -74,7 +74,7 @@ ActiveRecord::Schema.define(:version => 20130619112049) do
 
   create_table "annotation_value_seeds", :force => true do |t|
     t.integer  "attribute_id",                                        :null => false
-    t.string   "old_value"
+    t.string   "old_value",                  :default => ""
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "value_type",   :limit => 50, :default => "TextValue", :null => false
@@ -204,6 +204,10 @@ ActiveRecord::Schema.define(:version => 20130619112049) do
 
   add_index "favourites", ["favouritable_type", "favouritable_id"], :name => "favourites_favouritable_index"
   add_index "favourites", ["user_id"], :name => "favourites_user_id_index"
+
+  create_table "innodb_lock_monitor", :id => false, :force => true do |t|
+    t.integer "a"
+  end
 
   create_table "number_value_versions", :force => true do |t|
     t.integer  "number_value_id",    :null => false
@@ -435,6 +439,10 @@ ActiveRecord::Schema.define(:version => 20130619112049) do
     t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "logo_file_name"
+    t.string   "logo_content_type"
+    t.integer  "logo_file_size"
+    t.datetime "logo_updated_at"
   end
 
   add_index "service_providers", ["name"], :name => "service_providers_name_index"
