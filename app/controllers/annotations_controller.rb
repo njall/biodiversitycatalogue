@@ -177,7 +177,7 @@ class AnnotationsController < ApplicationController
     # Set source as the current logged in user
     params[:annotation][:source_type] = current_user.class.name
     params[:annotation][:source_id] = current_user.id
-
+    
     # Do we create multiple annotations or a single annotation?
     if params[:multiple]
       success, annotations, errors = Annotation.create_multiple(params[:annotation], params[:separator])
